@@ -34,7 +34,7 @@ static void tx_cb_nbiotUART(const struct usart_async_descriptor *const io_descr)
 	nbiotTxDone = true;
 }
 
-void nbiotUARTdriverInit(void)
+void nbiotUARTinit(void)
 {
 	usart_async_register_callback(&nbiotUART, USART_ASYNC_RXC_CB, rx_cb_nbiotUART);
 	usart_async_register_callback(&nbiotUART, USART_ASYNC_TXC_CB, tx_cb_nbiotUART);

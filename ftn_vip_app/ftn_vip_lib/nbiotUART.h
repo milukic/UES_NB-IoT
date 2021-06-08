@@ -10,7 +10,7 @@
 
 #include <atmel_start.h>
 
-void nbiotUARTdriverInit(void);
+void nbiotUARTinit(void);
 uint16_t nbiotUARTavailable(void);
 void nbiotUARTputChar(char c);
 void nbiotUARTputString(char *str);

@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include "ftn_vip_lib/usbUART.h"
 #include "ftn_vip_lib/debugUART.h"
+#include "ftn_vip_lib/nbiotUART.h"
 #include "ftn_vip_lib/timer_1ms.h"
+#include "ftn_vip_lib/Quectel_BC68.h"
 
 //on-board sensors:
 #include "ftn_vip_lib/SHTC3.h"
@@ -58,12 +60,12 @@ int main(void)
 	atmel_start_init();
 	debugUARTdriverInit();
 	usbUARTinit();
-
+	nbiotUARTinit();
 	timer_1ms_init();
-	setLEDfreq(FREQ_5HZ);
-	enableLED();
+
 	
-	char str[64];
+	char str[256];
+	delay(3000);
 	sprintf(str, "--- FTN-VIP NB-IoT ---\r\n");
 	usbUARTputString(str);
 	setLEDfreq(FREQ_1HZ);
@@ -76,8 +78,30 @@ int main(void)
 	LIS2DE12_init();
 	
 	//accelTest();
-	sensorTest();
+	//sensorTest();
 	
-	while (1);
+	//NB-IoT connect
+	BC68_debugEnable(true, DEBUG_USB);
+	BC68_connect();
+	
+	setLEDfreq(FREQ_1HZ);
+	while (1)
+	{
+		while (gpio_get_pin_level(BUTTON));
+		
+		char payload[256], response[256];
+		sprintf(payload, "Hello world!\r\n");
+		
+		char socket = BC68_openSocket(1, UDP);
+		int16_t rxBytes = BC68_tx_UDP("199.247.17.15", 50061, payload, strlen(payload), socket);
+		BC68_rx_UDP(response, rxBytes, socket);
+		BC68_closeSocket(socket);
+		
+		sprintf(str, "Server response -> %s\r\n", response);
+		usbUARTputString(str);
+		
+		delay(1000);
+		
+	}
 }
 

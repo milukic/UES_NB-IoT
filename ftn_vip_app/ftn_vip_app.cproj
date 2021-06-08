@@ -972,6 +972,12 @@
     <Compile Include="ftn_vip_lib\nbiotUART.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="ftn_vip_lib\Quectel_BC68.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ftn_vip_lib\Quectel_BC68.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="ftn_vip_lib\SHTC3.c">
       <SubType>compile</SubType>
     </Compile>
