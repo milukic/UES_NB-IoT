@@ -22,7 +22,6 @@ bool BC68_closeSocket(char socket);
 bool BC68_timeSync(void);
 bool BC68_getIPaddr(char *IP_addr);
 bool BC68_getIMSI(char *IMSI);
-bool BC68_timeSync(void);
 void BC68_debugEnable(bool enabled, BC68_DEBUG_INTERFACE interface);
 bool BC68_getConnectionStatus(void);
 

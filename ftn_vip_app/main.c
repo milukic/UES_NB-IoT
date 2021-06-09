@@ -87,20 +87,39 @@ int main(void)
 	setLEDfreq(FREQ_1HZ);
 	while (1)
 	{
-		while (gpio_get_pin_level(BUTTON));
+		//while (gpio_get_pin_level(BUTTON));
+		
+		//SHTC3
+		SHTC3_update();
+		uint32_t shtc3_hum = SHTC3_raw2Percent() * 100;
+		uint32_t shtc3_temp = SHTC3_raw2DegC() * 100;
+		sprintf(str, "SHTC3 ->\tT = %d.%d C\tH = %d.%d \%\r\n", shtc3_temp / 100, shtc3_temp % 100, shtc3_hum / 100, shtc3_hum % 100);
+		usbUARTputString(str);
+		
+		//BMP280
+		int32_t bmp280_temp, bmp280_pres;
+		bmp280_measure(&bmp280_temp, &bmp280_pres);
+		sprintf(str, "BMP280 ->\tT = %d.%d C\tP = %d.%d mBar\r\n", bmp280_temp / 100, bmp280_temp % 100, bmp280_pres / 100, bmp280_pres % 100);
+		usbUARTputString(str);
+		
+		//BH1750FVI
+		uint32_t lum = BH1750FVI_GetLightIntensity();
 		
 		char payload[256], response[256];
-		sprintf(payload, "Hello world!\r\n");
+		sprintf(payload,	"AcbdvIJLWDjobbWpu0vpmZ0M\n"
+							"maker:4GxoHYybcBGlCQP0QXgBQDPWemGpsTgoFjnPV9hW\n"
+							"{\"temp\":{\"value\":%d.%d},\"pres\":{\"value\":%d.%d},\"hum\":{\"value\":%d.%d},\"lum\":{\"value\":%ld}}",
+							shtc3_temp / 100, shtc3_temp % 100, bmp280_pres / 100, bmp280_pres % 100, shtc3_hum / 100, shtc3_hum % 100, lum);
 		
 		char socket = BC68_openSocket(1, UDP);
-		int16_t rxBytes = BC68_tx_UDP("199.247.17.15", 50061, payload, strlen(payload), socket);
+		int16_t rxBytes = BC68_tx_UDP("20.61.15.37", 8891, payload, strlen(payload), socket);
 		BC68_rx_UDP(response, rxBytes, socket);
 		BC68_closeSocket(socket);
 		
 		sprintf(str, "Server response -> %s\r\n", response);
 		usbUARTputString(str);
 		
-		delay(1000);
+		delay(10000);
 		
 	}
 }
