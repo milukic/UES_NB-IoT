@@ -249,12 +249,20 @@ bool BC68_getConnectionStatus(void)
 }
 
 // UDP related functions
-int16_t BC68_tx_UDP(char SERVER_IP[], uint16_t sending_port, uint8_t* payload, uint16_t length, char socket)
+int16_t BC68_tx(uint8_t protocol, char SERVER_IP[], uint16_t sending_port, uint8_t* payload, uint16_t length, char socket)
 {
 	char cmd[128], response[128], msg2hex[3], nsonmi[24];
 	uint8_t msg_index = 0, hi, lo;
 
-	sprintf(cmd, "AT+NSOST=%c,%s,%d,%d,", socket, SERVER_IP, sending_port, length);
+	if (protocol == UDP)
+		sprintf(cmd, "AT+NSOST=%c,%s,%d,%d,", socket, SERVER_IP, sending_port, length);
+	else
+	{
+		//connect to the server
+		sprintf(cmd, "AT+NSOCO=1,%s,%d\r\n", SERVER_IP, sending_port);
+		getBC68response(cmd, "OK", response, 5000);
+		sprintf(cmd, "AT+NSOSD=1,%d,", length);
+	}
 	
 	printDebugString(cmd);
 	nbiotUARTputString(cmd);
@@ -314,7 +322,7 @@ int16_t BC68_tx_UDP(char SERVER_IP[], uint16_t sending_port, uint8_t* payload, u
 	}
 }
 
-bool BC68_rx_UDP(char* msg, int16_t rx_bytes, char socket)
+bool BC68_rx(char* msg, int16_t rx_bytes, char socket)
 {
 	char cmd[32], response[48], str[32];
 	uint8_t i;

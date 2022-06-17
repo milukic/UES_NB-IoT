@@ -26,7 +26,7 @@ void BC68_debugEnable(bool enabled, BC68_DEBUG_INTERFACE interface);
 bool BC68_getConnectionStatus(void);
 
 // UDP related functions
-int16_t BC68_tx_UDP(char SERVER_IP[], uint16_t sending_port, uint8_t* payload, uint16_t length, char socket);
-bool BC68_rx_UDP(char* msg, int16_t rx_bytes, char socket);
+int16_t BC68_tx(uint8_t protocol, char SERVER_IP[], uint16_t sending_port, uint8_t* payload, uint16_t length, char socket);
+bool BC68_rx(char* msg, int16_t rx_bytes, char socket);
 
 #endif /* QUECTEL_BC68_H_ */
