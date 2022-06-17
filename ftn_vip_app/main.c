@@ -36,13 +36,9 @@ typedef struct
 	uint32_t lum;
 }accel_data;
 
-//AllThingsTalk parametri uredjaja
-char DevID[] = "...";
-char DeviceToken[] = "...";
-
 //parametri servera
 #define ServerIP	"199.247.17.15"
-#define ServerPort	...
+#define ServerPort	500xx
 
 void getSensorData(sensor_data *sd)
 {
@@ -93,48 +89,6 @@ void echoTest(uint8_t protocol)
 	BC68_closeSocket(socket);
 }
 
-void tcpEchoTest()
-{
-	char str[128], payload[64], response[64];
-
-	sprintf(str, "Pritisni taster za slanje...\r\n");
-	usbUARTputString(str);
-	while (gpio_get_pin_level(BUTTON));
-
-	sprintf(payload, "Hello world!");
-	char socket = BC68_openSocket(1, UDP);
-	int16_t rxBytes = BC68_tx_TCP(ServerIP, ServerPort, payload, strlen(payload), socket);
-	BC68_rx(response, rxBytes, socket);
-	sprintf(str, "Odgovor servera -> %s\r\n", response);
-	usbUARTputString(str);
-	BC68_closeSocket(socket);
-}
-
-void allThingsTalk_test()
-{
-	char str[64];
-
-	sprintf(str, "Pritisni taster za slanje...\r\n");
-	usbUARTputString(str);
-	while (gpio_get_pin_level(BUTTON));
-	
-	//ocitaj senzore
-	sensor_data sd;
-	getSensorData(&sd);
-	
-	char payload[256], response[256];
-	
-	sprintf(payload, "%s\n%s\n"
-	"{\"temp\":{\"value\":%d.%d},\"pres\":{\"value\":%d.%d},\"hum\":{\"value\":%d.%d},\"lum\":{\"value\":%ld}}",
-	DevID, DeviceToken,
-	sd.shtc3_temp / 100, sd.shtc3_temp % 100, sd.bmp280_pres / 100, sd.bmp280_pres % 100, sd.shtc3_hum / 100, sd.shtc3_hum % 100, sd.lum);
-	
-	char socket = BC68_openSocket(1, UDP);
-	int16_t rxBytes = BC68_tx(UDP, "20.61.15.37", 8891, payload, strlen(payload), socket);
-	BC68_rx(response, rxBytes, socket);
-	BC68_closeSocket(socket);
-}
-
 int main(void)
 {
 	//Inicijalizacija
@@ -169,8 +123,8 @@ int main(void)
 	{
 		//getAccelData(&ad);
 		//getSensorData(&sd);
+		//echoTest(UDP);
 		//echoTest(TCP);
-		//allThingsTalk_test();
 		
 		//delay(5000);
 	}
