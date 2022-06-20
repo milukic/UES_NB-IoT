@@ -72,15 +72,14 @@ void getAccelData(accel_3axis *accel)
 	delay(5);
 }
 
-void echoTest(uint8_t protocol)
+void echoTest(uint8_t protocol, char *payload)
 {
-	char str[128], payload[64], response[64];
+	char str[128], response[128];
 
 	sprintf(str, "Pritisni taster za slanje...\r\n");
 	usbUARTputString(str);
 	while (gpio_get_pin_level(BUTTON));
 
-	sprintf(payload, "Hello world!");
 	char socket = BC68_openSocket(1, protocol);
 	int16_t rxBytes = BC68_tx(protocol, ServerIP, ServerPort, payload, strlen(payload), socket);
 	BC68_rx(response, rxBytes, socket);
@@ -123,8 +122,8 @@ int main(void)
 	{
 		//getAccelData(&ad);
 		//getSensorData(&sd);
-		//echoTest(UDP);
-		//echoTest(TCP);
+		//echoTest(UDP, "UDP test data...");
+		//echoTest(TCP, "TCP test data...");
 		
 		//delay(5000);
 	}
