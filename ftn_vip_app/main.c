@@ -24,18 +24,6 @@ typedef struct
 	uint32_t lum;
 }sensor_data;
 
-typedef struct
-{
-	//SHTC3
-	uint32_t shtc3_hum;
-	uint32_t shtc3_temp;
-	//BMP280
-	int32_t bmp280_temp;
-	int32_t bmp280_pres;
-	//BH1750FVI
-	uint32_t lum;
-}accel_data;
-
 //parametri servera
 #define ServerIP	"199.247.17.15"
 #define ServerPort	500xx
