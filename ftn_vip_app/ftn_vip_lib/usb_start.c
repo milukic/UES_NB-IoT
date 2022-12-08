@@ -7,6 +7,7 @@
  */
 #include "atmel_start.h"
 #include "usb_start.h"
+#include "usbUART.h"
 
 #if CONF_USBD_HS_SP
 static uint8_t single_desc_bytes[] = {
@@ -42,7 +43,11 @@ static uint8_t ctrl_buffer[64];
  */
 static bool usb_device_cb_bulk_out(const uint8_t ep, const enum usb_xfer_code rc, const uint32_t count)
 {
-	cdcdf_acm_write((uint8_t *)usbd_cdc_buffer, count);
+	//cdcdf_acm_write((uint8_t *)usbd_cdc_buffer, count);
+	cdcdf_acm_write((uint8_t *)usbd_cdc_buffer, 0);
+	
+	for (int i = 0; i < count; i++)
+		usbUARTenqueue(usbd_cdc_buffer[i]);
 
 	/* No error. */
 	return false;
@@ -55,7 +60,7 @@ static bool usb_device_cb_bulk_in(const uint8_t ep, const enum usb_xfer_code rc,
 {
 	/* Echo data. */
 	cdcdf_acm_read((uint8_t *)usbd_cdc_buffer, sizeof(usbd_cdc_buffer));
-
+	
 	/* No error. */
 	return false;
 }
@@ -65,7 +70,8 @@ static bool usb_device_cb_bulk_in(const uint8_t ep, const enum usb_xfer_code rc,
  */
 static bool usb_device_cb_state_c(usb_cdc_control_signal_t state)
 {
-	if (state.rs232.DTR) {
+	//if (state.rs232.DTR) 
+	{
 		/* Callbacks must be registered after endpoint allocation */
 		cdcdf_acm_register_callback(CDCDF_ACM_CB_READ, (FUNC_PTR)usb_device_cb_bulk_out);
 		cdcdf_acm_register_callback(CDCDF_ACM_CB_WRITE, (FUNC_PTR)usb_device_cb_bulk_in);
@@ -116,6 +122,11 @@ void cdcd_acm_example(void)
 
 void usb_init(void)
 {
-
 	cdc_device_acm_init();
+	
+	while (!cdcdf_acm_is_enabled()) {
+		// wait cdc acm to be installed
+	};
+
+	cdcdf_acm_register_callback(CDCDF_ACM_CB_STATE_C, (FUNC_PTR)usb_device_cb_state_c);
 }
