@@ -25,7 +25,7 @@ typedef struct
 }sensor_data;
 
 //parametri servera
-#define ServerIP	"199.247.17.15"
+#define ServerIP	"45.76.87.164"
 #define ServerPort	500xx
 
 void getSensorData(sensor_data *sd)
@@ -100,8 +100,8 @@ int main(void)
 	LIS2DE12_init();
 	
 	//NB-IoT connect
-	BC68_debugEnable(true, DEBUG_USB);
-	BC68_connect();
+//	BC68_debugEnable(true, DEBUG_USB);
+//	BC68_connect();
 
 	setLEDfreq(FREQ_1HZ);
 	sensor_data sd;
